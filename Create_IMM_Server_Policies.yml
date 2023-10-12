@@ -1,0 +1,13 @@
+---
+# Creating server policies specific to Converged Infrastrucure stack. These policies are used
+# to configure the Server Profile Template(s)
+
+- name: "Conifgure IMM Server Policies"
+  hosts: localhost
+  gather_facts: no
+  vars_files:
+    - group_vars/ucs.yml
+
+  # Create Various Server Policies
+  roles:
+    - role: UCS-IMM/create_server_policies

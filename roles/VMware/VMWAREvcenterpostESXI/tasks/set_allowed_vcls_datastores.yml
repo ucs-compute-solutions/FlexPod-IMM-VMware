@@ -1,0 +1,19 @@
+---
+# This task sets the allowed vCLS datastore on the FlexPod MGMT Cluster
+
+  - name: Import esxi_datastores role to get vCLS datastores related info
+    import_role:
+      name: ONTAP/esxi_datastores
+
+  - name: Set Allowed vCLS Datastores
+    community.vmware.vmware_cluster_vcls:
+      hostname: '{{ vcenter_hostname }}'
+      username: '{{ vcenter_username }}'
+      password: '{{ vcenter_password }}'
+      validate_certs: no
+      datacenter_name: '{{ vcenter_dc }}'
+      cluster_name: '{{ vcenter_cluster }}'
+      allowed_datastores:
+        - '{{ item.datastore_name }}'
+    with_items:
+      - "{{ vcls_ds_lif_map }}"

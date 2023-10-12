@@ -1,0 +1,11 @@
+---
+# Playbook: Configure the Cisco MDS Switches in FlexPod
+- hosts: mds
+  connection: network_cli
+  gather_facts: no
+  vars_files:
+    - vars/ontap_main.yml
+  roles:
+    ### Configure Nexus Switching
+    #
+    - MDSconfig

@@ -1,0 +1,172 @@
+---
+# Migrate the iSCSI booted hosts also supporting NVMe-TCP to the iSCSI-NVMe-TCP vDS
+# and add the NVMe-TCP VMkernel Ports to the vDS
+########################################################################################
+# Note: the NVMe-TCP Service will need to be manually added to the VMkernel ports before
+# NVMe-TCP can be used.
+########################################################################################
+#
+# Remove the iSCSI-A VMkernel from {{ iscsi_a_vswitch }}
+  - name: Remove iSCSI-A VMkernel from {{ iscsi_a_vswitch }}
+    community.vmware.vmware_vmkernel:
+      hostname: '{{ vcenter_hostname }}'
+      username: '{{ vcenter_username }}'
+      password: '{{ vcenter_password }}'
+      validate_certs: no
+      esxi_hostname: '{{ inventory_hostname }}'
+      vswitch_name: '{{ iscsi_a_vswitch }}'
+      portgroup_name: '{{ iscsi_a_portgroup }}'
+      device: vmk1
+      state: absent
+    delegate_to: localhost
+
+# Remove {{ iscsi_a_vswitch }}
+  - name: Remove {{ iscsi_a_vswitch }}
+    community.vmware.vmware_vswitch:
+      hostname: '{{ vcenter_hostname }}'
+      username: '{{ vcenter_username }}'
+      password: '{{ vcenter_password }}'
+      validate_certs: no
+      esxi_hostname: '{{ inventory_hostname }}'
+      switch_name: '{{ iscsi_a_vswitch }}'
+      state: absent
+    delegate_to: localhost
+
+# Add the Host to the vDS with the A-side Uplink
+  - name: Add host to the vDS '{{ iscsi_nvme_tcp_dvs_name }}'
+    community.vmware.vmware_dvs_host:
+      hostname: '{{ vcenter_hostname }}'
+      username: '{{ vcenter_username }}'
+      password: '{{ vcenter_password }}'
+      validate_certs: no
+      esxi_hostname: '{{ inventory_hostname }}'
+      switch_name: '{{ iscsi_nvme_tcp_dvs_name }}'
+      vmnics:
+          - '{{ iscsi_a_uplink }}'
+      state: present
+    delegate_to: localhost
+
+# Add the iSCSI-A VMKernel to {{ iscsi_nvme_tcp_dvs_name }}
+  - name: Add iSCSI-A VMKernel to {{ iscsi_nvme_tcp_dvs_name }}
+    community.vmware.vmware_vmkernel:
+      hostname: '{{ vcenter_hostname }}'
+      username: '{{ vcenter_username }}'
+      password: '{{ vcenter_password }}'
+      validate_certs: no
+      esxi_hostname: '{{ inventory_hostname }}'
+      dvswitch_name: '{{ iscsi_nvme_tcp_dvs_name }}'
+      portgroup_name: '{{ iscsi_nvme_tcp_vds_vlan_list[0].portgroup_name }}'
+      mtu: '{{ iscsi_mtu }}'
+      network:
+        type: 'static'
+        ip_address: '{{ iscsi_a_ip }}'
+        subnet_mask: '{{ iscsi_mask }}'
+      state: present
+    delegate_to: localhost
+
+# Remove the iSCSI-B VMkernel from {{ iscsi_b_vswitch }}
+  - name: Remove iSCSI-B VMkernel from {{ iscsi_b_vswitch }}
+    community.vmware.vmware_vmkernel:
+      hostname: '{{ vcenter_hostname }}'
+      username: '{{ vcenter_username }}'
+      password: '{{ vcenter_password }}'
+      validate_certs: no
+      esxi_hostname: '{{ inventory_hostname }}'
+      vswitch_name: '{{ iscsi_b_vswitch }}'
+      portgroup_name: '{{ iscsi_b_portgroup }}'
+      device: vmk2
+      state: absent
+    delegate_to: localhost
+
+# Remove {{ iscsi_b_vswitch }}
+  - name: Remove {{ iscsi_b_vswitch }}
+    community.vmware.vmware_vswitch:
+      hostname: '{{ vcenter_hostname }}'
+      username: '{{ vcenter_username }}'
+      password: '{{ vcenter_password }}'
+      validate_certs: no
+      esxi_hostname: '{{ inventory_hostname }}'
+      switch_name: '{{ iscsi_b_vswitch }}'
+      state: absent
+    delegate_to: localhost
+
+# Add the B-side Uplink to the vDS
+  - name: Add the B-Side Uplink to the vDS '{{ iscsi_nvme_tcp_dvs_name }}'
+    community.vmware.vmware_dvs_host:
+      hostname: '{{ vcenter_hostname }}'
+      username: '{{ vcenter_username }}'
+      password: '{{ vcenter_password }}'
+      validate_certs: no
+      esxi_hostname: '{{ inventory_hostname }}'
+      switch_name: '{{ iscsi_nvme_tcp_dvs_name }}'
+      vmnics:
+          - '{{ iscsi_a_uplink }}'
+          - '{{ iscsi_b_uplink }}'
+      state: present
+    delegate_to: localhost
+
+# Add the iSCSI-B VMKernel to {{ iscsi_nvme_tcp_dvs_name }}
+  - name: Add iSCSI-B VMKernel to {{ iscsi_nvme_tcp_dvs_name }}
+    community.vmware.vmware_vmkernel:
+      hostname: '{{ vcenter_hostname }}'
+      username: '{{ vcenter_username }}'
+      password: '{{ vcenter_password }}'
+      validate_certs: no
+      esxi_hostname: '{{ inventory_hostname }}'
+      dvswitch_name: '{{ iscsi_nvme_tcp_dvs_name }}'
+      portgroup_name: '{{ iscsi_nvme_tcp_vds_vlan_list[1].portgroup_name }}'
+      mtu: '{{ iscsi_mtu }}'
+      network:
+        type: 'static'
+        ip_address: '{{ iscsi_b_ip }}'
+        subnet_mask: '{{ iscsi_mask }}'
+      state: present
+    delegate_to: localhost
+
+# Add the NVMe-TCP-A VMKernel to {{ iscsi_nvme_tcp_dvs_name }}
+  - name: Add  NVMe-TCP-A VMKernel to {{ iscsi_nvme_tcp_dvs_name }}
+    community.vmware.vmware_vmkernel:
+      hostname: '{{ vcenter_hostname }}'
+      username: '{{ vcenter_username }}'
+      password: '{{ vcenter_password }}'
+      validate_certs: no
+      esxi_hostname: '{{ inventory_hostname }}'
+      dvswitch_name: '{{ iscsi_nvme_tcp_dvs_name }}'
+      portgroup_name: '{{ iscsi_nvme_tcp_vds_vlan_list[2].portgroup_name }}'
+      mtu: '{{ nvme_tcp_mtu }}'
+      network:
+        type: 'static'
+        ip_address: '{{ nvme_a_ip }}'
+        subnet_mask: '{{ nvme_mask }}'
+      state: present
+    delegate_to: localhost
+    when: configure_nvme_tcp == 'true'
+
+# Add the NVMe-TCP tag to the NVMe-TCP-A VMkernel port
+  - name: Add the NVMe-TCP tag to the NVMe-TCP-A VMkernel port
+    ansible.builtin.command: esxcli network ip interface tag add -i vmk5 -t NVMeTCP
+    when: configure_nvme_tcp == 'true'
+
+# Add the NVMe-TCP-B VMKernel to {{ iscsi_nvme_tcp_dvs_name }}
+  - name: Add  NVMe-TCP-B VMKernel to {{ iscsi_nvme_tcp_dvs_name }}
+    community.vmware.vmware_vmkernel:
+      hostname: '{{ vcenter_hostname }}'
+      username: '{{ vcenter_username }}'
+      password: '{{ vcenter_password }}'
+      validate_certs: no
+      esxi_hostname: '{{ inventory_hostname }}'
+      dvswitch_name: '{{ iscsi_nvme_tcp_dvs_name }}'
+      portgroup_name: '{{ iscsi_nvme_tcp_vds_vlan_list[3].portgroup_name }}'
+      mtu: '{{ nvme_tcp_mtu }}'
+      network:
+        type: 'static'
+        ip_address: '{{ nvme_b_ip }}'
+        subnet_mask: '{{ nvme_mask }}'
+      state: present
+    delegate_to: localhost
+    when: configure_nvme_tcp == 'true'
+
+# Add the NVMe-TCP tag to the NVMe-TCP-B VMkernel port
+  - name: Add the NVMe-TCP tag to the NVMe-TCP-B VMkernel port
+    ansible.builtin.command: esxcli network ip interface tag add -i vmk6 -t NVMeTCP
+    when: configure_nvme_tcp == 'true'

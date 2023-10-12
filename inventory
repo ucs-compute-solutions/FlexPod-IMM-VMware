@@ -1,0 +1,66 @@
+# ONTAP Cluster Management IP. List only one ONTAP cluster IP.
+[ontap]
+10.102.0.30
+
+[nexus]
+n9kA ansible_host=10.102.0.3 ansible_user=admin ansible_password=<password> ansible_network_os=nxos
+n9kB ansible_host=10.102.0.4 ansible_user=admin ansible_password=<password> ansible_network_os=nxos
+
+# e.g. n9kA ansible_host=192.168.1.2 ansible_user=admin ansible_password=cisco!23 ansible_network_os=nxos
+# e.g. n9kB ansible_host=192.168.1.3 ansible_user=admin ansible_password=cisco!23 ansible_network_os=nxos
+
+[mds]
+mdsA ansible_host=10.102.0.7 ansible_user=admin ansible_password=<password> ansible_network_os=nxos
+mdsB ansible_host=10.102.0.8 ansible_user=admin ansible_password=<password> ansible_network_os=nxos
+
+# e.g. mdsA ansible_host=192.168.1.4 ansible_user=admin ansible_password=cisco!23 ansible_network_os=nxos
+# e.g. mdsB ansible_host=192.168.1.5 ansible_user=admin ansible_password=cisco!23 ansible_network_os=nxos
+
+[vmware:children]
+#
+# This section is used to define the ESXi configuration parameters.
+# You need to provide vmotion, nfs, iSCSI-A and iSCSI-B (if needed) IP addresses and subnet masks to be configured on VMK for the hosts
+#
+# The VMware vCenter connectivity information is defined in group_vars/all.yml using following variables:
+# vcenter_hostname, vcenter_username, vcenter_password
+#
+# The ESXi host username and password is also defined (copied) in group_vars/all.yml esxi_username and esxi_password
+#
+esxi_fc
+esxi_iscsi
+
+[vmware:vars]
+ansible_connection=ssh
+ansible_user=root
+ansible_ssh_pass=<password>
+ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+ansible_python_interpreter=/bin/python
+
+[esxi_fc]
+#
+# Comment out or delete all the hosts if ESXi hosts with FC connectivity are not present
+# FC host configuration will only take place if the variable configure_fc: 'true' is defined
+# FC host names are defined in group_vars/all.yml. The actual host FQDN, or host IP can be used here.
+# Note that if an IP is not used here, the FQDN should be used for the VMware scripts to work without errors.
+#
+aa02-esxi-01.flexpodb4.cisco.com vmotion_ip=192.168.0.101 vmotion_mask=255.255.255.0 nfs_ip=192.168.50.101 nfs_mask=255.255.255.0 
+aa02-esxi-02.flexpodb4.cisco.com vmotion_ip=192.168.0.102 vmotion_mask=255.255.255.0 nfs_ip=192.168.50.102 nfs_mask=255.255.255.0 
+aa02-esxi-03.flexpodb4.cisco.com vmotion_ip=192.168.0.103 vmotion_mask=255.255.255.0 nfs_ip=192.168.50.103 nfs_mask=255.255.255.0 
+
+# e.g. 10.1.1.101  vmotion_ip=192.168.30.101  vmotion_mask=255.255.255.0 nfs_ip=192.168.50.101 nfs_mask=255.255.255.0
+# e.g. 10.1.1.102  vmotion_ip=192.168.30.102  vmotion_mask=255.255.255.0 nfs_ip=192.168.50.102 nfs_mask=255.255.255.0
+
+[esxi_iscsi]
+#
+# Comment out or delete all the hosts if ESXi hosts with iSCSI connectivity are not present
+# iSCSI host configuration will only take place if the variable configure_iscsi: 'true' is defined
+# iSCSI host names are defined in group_vars/all.yml. The actual host FQDN, or host IP can be used here.
+# Note that if an IP is not used here, the FQDN should be used for the VMware scripts to work without errors.
+#
+
+# aa02-esxi-04.flexpodb4.cisco.com vmotion_ip=192.168.0.104 vmotion_mask=255.255.255.0 nfs_ip=192.168.50.104 nfs_mask=255.255.255.0 iscsi_a_ip=192.168.10.104 iscsi_b_ip=192.168.20.104 iscsi_mask=255.255.255.0 nvme_a_ip=192.168.30.104 nvme_b_ip=192.168.40.104 nvme_mask=255.255.255.0
+# aa02-esxi-05.flexpodb4.cisco.com vmotion_ip=192.168.0.105 vmotion_mask=255.255.255.0 nfs_ip=192.168.50.105 nfs_mask=255.255.255.0 iscsi_a_ip=192.168.10.105 iscsi_b_ip=192.168.20.105 iscsi_mask=255.255.255.0 nvme_a_ip=192.168.30.105 nvme_b_ip=192.168.40.105 nvme_mask=255.255.255.0
+# aa02-esxi-06.flexpodb4.cisco.com vmotion_ip=192.168.0.106 vmotion_mask=255.255.255.0 nfs_ip=192.168.50.106 nfs_mask=255.255.255.0 iscsi_a_ip=192.168.10.106 iscsi_b_ip=192.168.20.106 iscsi_mask=255.255.255.0 nvme_a_ip=192.168.30.106 nvme_b_ip=192.168.40.106 nvme_mask=255.255.255.0
+
+# e.g. 10.1.1.103  vmotion_ip=192.168.30.103 vmotion_mask=255.255.255.0 nfs_ip=192.168.50.103 nfs_mask=255.255.255.0 iscsi_a_ip=192.168.10.103 iscsi_b_ip=192.168.20.103 iscsi_mask=255.255.255.0 nvme_a_ip=192.168.30.103 nvme_b_ip=192.168.40.103 nvme_mask=255.255.255.0
+# e.g. 10.1.1.104  vmotion_ip=192.168.30.104 vmotion_mask=255.255.255.0 nfs_ip=192.168.50.104 nfs_mask=255.255.255.0 iscsi_a_ip=192.168.10.104 iscsi_b_ip=192.168.20.104 iscsi_mask=255.255.255.0 nvme_a_ip=192.168.30.104 nvme_b_ip=192.168.40.104 nvme_mask=255.255.255.0

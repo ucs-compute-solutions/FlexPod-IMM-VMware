@@ -1,0 +1,35 @@
+---
+  - name: vCenter vDS Portgroup Creation
+    community.vmware.vmware_dvs_portgroup:
+      hostname: '{{ vcenter_hostname }}'
+      username: '{{ vcenter_username }}'
+      password: '{{ vcenter_password }}'
+      validate_certs: no
+      switch_name: '{{ dvs_name }}'
+      portgroup_name: '{{ item.portgroup_name }}'
+      vlan_id: '{{ item.id }}'
+      num_ports: 120
+      port_binding: static
+      state: present
+      teaming_policy:
+        active_uplinks: "{{ item.active_uplinks }}"
+        standby_uplinks: "{{ item.standby_uplinks }}"
+    with_list: "{{ vds0_vlan_list }}"
+
+  - name: vCenter iSCSI-NVMe-TCP vDS Portgroup Creation
+    community.vmware.vmware_dvs_portgroup:
+      hostname: '{{ vcenter_hostname }}'
+      username: '{{ vcenter_username }}'
+      password: '{{ vcenter_password }}'
+      validate_certs: no
+      switch_name: '{{ iscsi_nvme_tcp_dvs_name }}'
+      portgroup_name: '{{ item.portgroup_name }}'
+      vlan_id: '{{ item.id }}'
+      num_ports: 120
+      port_binding: static
+      state: present
+      teaming_policy:
+        active_uplinks: "{{ item.active_uplinks }}"
+        standby_uplinks: "{{ item.standby_uplinks }}"
+    with_list: "{{ iscsi_nvme_tcp_vds_vlan_list }}"
+    when: configure_iscsi == 'true'

@@ -1,0 +1,58 @@
+---
+# ESXi hosts booted with the Cisco Custom ISO for ESXi 7.0U3 need
+# to have drivers either updated or installed.
+
+  - name: Download nenic driver to tmp directory
+    ansible.builtin.command: wget {{ nenic_offline_bundle_url }} -P /tmp
+    when: nenic_offline_bundle_url is defined
+
+  - name: Update nenic driver
+    ansible.builtin.command: esxcli software component apply -d /tmp/{{ nenic_filename }} 
+    when: nenic_filename is defined
+
+  - name: Download nenic-ens driver to tmp directory
+    ansible.builtin.command: wget {{ nenic_ens_offline_bundle_url }} -P /tmp
+    when: nenic_ens_offline_bundle_url is defined
+
+  - name: Update nenic-ens driver
+    ansible.builtin.command: esxcli software component apply -d /tmp/{{ nenic_ens_filename }}
+    when: nenic_ens_filename is defined
+
+  - name: Download nfnic driver to tmp directory
+    ansible.builtin.command: wget {{ nfnic_offline_bundle_url }} -P /tmp
+    when: nfnic_offline_bundle_url is defined
+
+  - name: Update nfnic driver
+    ansible.builtin.command: esxcli software component apply -d /tmp/{{ nfnic_filename }}
+    when: nfnic_filename is defined
+
+  - name: Download lsi-mr3 driver to tmp directory
+    ansible.builtin.command: wget {{ lsi_mr3_offline_bundle_url }} -P /tmp
+    when: lsi_mr3_offline_bundle_url is defined
+
+  - name: Update lsi-mr3 driver
+    ansible.builtin.command: esxcli software component apply -d /tmp/{{ lsi_mr3_filename }}
+    when: lsi_mr3_filename is defined
+
+  - name: Download NetApp NFS VAAI Plugin driver to tmp directory
+    ansible.builtin.command: wget {{ NetAppVAAI_offline_bundle_url }} -P /tmp
+    when: NetAppVAAI_offline_bundle_url is defined
+
+  - name: Install NetApp NFS VAAI Plugin driver
+    ansible.builtin.command: esxcli software component apply -d /tmp/{{ NetAppVAAI_filename }}
+    when: NetAppVAAI_filename is defined
+
+  - name: Download UCS Tools driver to tmp directory
+    ansible.builtin.command: wget {{ UCS_Tools_url }} -P /tmp
+    when: UCS_Tools_url is defined
+
+  - name: Update UCS Tools driver
+    ansible.builtin.command: esxcli software component apply -d /tmp/{{ UCS_Tools_filename }}
+    when: UCS_Tools_filename is defined
+
+  - name: Enable NVMe with ANA
+    ansible.builtin.command: esxcfg-advcfg -s 0 /Misc/HppManageDegradedPaths
+    when: (configure_nvme_tcp == 'true') or (configure_fc_nvme == 'true')
+
+  - name: Reboot Host
+    ansible.builtin.command: reboot

@@ -1,0 +1,90 @@
+---
+# Variables defined here are specific to Nexus9K-B for SAN Switching.
+#
+# Variables used to create port channel to UCS.
+  port_channel_id: 1103
+  port_channel_speed: "auto"
+  port_channel_duplex: "auto"
+  port_channel_description: "AA02-6536-B"
+#
+#  VSAN number to use used for a the fabric being created
+  vsan_id: "{{ vsan_B_id }}"
+  vsan_name: "{{ vsan_B_name }}"
+#
+# The zone names and zoneset name used in the configuration
+  zoneset_name: FlexPod-Fabric-B
+  fcp_zone_name: "FCP-{{ svm_specs.svm_name }}-B"
+  fc_nvme_zone_name: "FC-NVMe-{{ svm_specs.svm_name }}-B"
+#
+# Device alias lists using device names and PWWNs from CVD.  Update the PWWNs to match your deployment
+  fcp_device_alias_list:
+    - device_name: "{{ svm_specs.svm_name }}-fcp-lif-01b"
+      pwwn: "{{ fcp_lif_01b }}"
+      dev_type: target
+    - device_name: "{{ svm_specs.svm_name }}-fcp-lif-02b"
+      pwwn: "{{ fcp_lif_02b }}"
+      dev_type: target
+  # Server Initiators are put in here. The number should match the number for fc_esxi_hosts in
+  # group_vars/all.yml. Three are put in here, with any unused commented out.
+    - device_name: "FCP-{{ fc_esxi_hosts[0].hostname }}-B"
+      pwwn: "{{ fc_esxi_hosts[0].fcp_b_wwpn }}"
+      dev_type: initiator
+    - device_name: "FCP-{{ fc_esxi_hosts[1].hostname }}-B"
+      pwwn: "{{ fc_esxi_hosts[1].fcp_b_wwpn }}"
+      dev_type: initiator
+    - device_name: "FCP-{{ fc_esxi_hosts[2].hostname }}-B"
+      pwwn: "{{ fc_esxi_hosts[2].fcp_b_wwpn }}"
+      dev_type: initiator
+    - device_name: "FCP-{{ fc_esxi_hosts[3].hostname }}-B"
+      pwwn: "{{ fc_esxi_hosts[3].fcp_b_wwpn }}"
+      dev_type: initiator
+    - device_name: "FCP-{{ fc_esxi_hosts[4].hostname }}-B"
+      pwwn: "{{ fc_esxi_hosts[4].fcp_b_wwpn }}"
+      dev_type: initiator
+#
+  fc_nvme_device_alias_list:
+    - device_name: "{{ svm_specs.svm_name }}-fc-nvme-lif-01b"
+      pwwn: "{{ fc_nvme_lif_01b }}"
+      dev_type: target
+    - device_name: "{{ svm_specs.svm_name }}-fc-nvme-lif-02b"
+      pwwn: "{{ fc_nvme_lif_02b }}"
+      dev_type: target
+  # Server Initiators are put in here. The number should match the number for fc_esxi_hosts in
+  # group_vars/all.yml. Three are put in here, with any unused commented out.
+    - device_name: "FC-NVMe-{{ fc_esxi_hosts[0].hostname }}-B"
+      pwwn: "{{ fc_esxi_hosts[0].fc_nvme_b_wwpn }}"
+      dev_type: initiator
+    - device_name: "FC-NVMe-{{ fc_esxi_hosts[1].hostname }}-B"
+      pwwn: "{{ fc_esxi_hosts[1].fc_nvme_b_wwpn }}"
+      dev_type: initiator
+    - device_name: "FC-NVMe-{{ fc_esxi_hosts[2].hostname }}-B"
+      pwwn: "{{ fc_esxi_hosts[2].fc_nvme_b_wwpn }}"
+      dev_type: initiator
+    - device_name: "FC-NVMe-{{ fc_esxi_hosts[3].hostname }}-B"
+      pwwn: "{{ fc_esxi_hosts[3].fc_nvme_b_wwpn }}"
+      dev_type: initiator
+    - device_name: "FC-NVMe-{{ fc_esxi_hosts[4].hostname }}-B"
+      pwwn: "{{ fc_esxi_hosts[4].fc_nvme_b_wwpn }}"
+      dev_type: initiator
+#
+# Nexus Switch Interface List
+#
+  storage_interface_list:
+    - interface: "fc1/1"
+      description: "AA02-A800-01:2b"
+      speed: "32000"
+    - interface: "fc1/2"
+      description: "AA02-A800-01:2d"
+      speed: "32000"
+    - interface: "fc1/49"
+      description: "AA02-A800-02:2b"
+      speed: "32000"
+    - interface: "fc1/50"
+      description: "AA02-A800-02:2d"
+      speed: "32000"
+#
+  ucs_interface_list:
+    - interface: "Eth1/103"
+      description: "AA02-6536-B:Eth1/27"
+    - interface: "Eth1/104"
+      description: "AA02-6536-B:Eth1/28"

@@ -1,0 +1,5 @@
+# Add ESXi hosts to the iSCSI-NVMe-TCP vSphere Distributed Switch and Add VMkernel Ports
+#
+# Migrate iSCSI-booted Hosts supporting NVMe-TCP to iSCSI-NVMe-TCP vDS and add VMkernel Ports
+  - include_tasks: migrate_to_iscsi_nvme_vds.yml
+    when: configure_iscsi == 'true'

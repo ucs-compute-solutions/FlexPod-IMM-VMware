@@ -1,0 +1,13 @@
+---
+# Playbook: Configure Nexus 93180YC-FX, 93360YC-FX2, or 9336C-FX2-E for SAN Switching, assuming that the Ethernet
+# switching part has already be done. Uses mds hosts. Modify mds hosts in inventory file with Nexus IP addresses
+# and also modify MDS variable files in host_vars with Nexus information.
+- hosts: mds
+  connection: network_cli
+  gather_facts: no
+  vars_files:
+    - vars/ontap_main.yml
+  roles:
+    ### Configure Nexus SAN Switching
+    #
+    - NEXUSSANconfig

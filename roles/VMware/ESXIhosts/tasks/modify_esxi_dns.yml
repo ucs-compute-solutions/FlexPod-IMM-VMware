@@ -1,0 +1,16 @@
+---
+  - name: Configure DNS on ESXi host
+    community.vmware.vmware_host_dns:
+      hostname: '{{ inventory_hostname }}'
+      username: '{{ ansible_user }}'
+      password: '{{ ansible_ssh_pass }}'
+      validate_certs: no
+      esxi_hostname: '{{ inventory_hostname }}'
+      type: static
+      domain: '{{ dns_domain_name }}'
+      dns_servers:
+        - '{{ dns_servers[0].ip_address }}'
+        - '{{ dns_servers[1].ip_address }}'
+      search_domains:
+        - '{{ dns_domain_name }}'
+    delegate_to: localhost

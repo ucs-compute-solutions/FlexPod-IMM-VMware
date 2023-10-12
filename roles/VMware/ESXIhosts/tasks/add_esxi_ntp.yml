@@ -1,0 +1,25 @@
+---
+  - name: Build NTP Server String
+    set_fact:
+      ntp_server_string: "{{ ib_mgmt_ntp_servers[0].ip_address }},{{ ib_mgmt_ntp_servers[1].ip_address }}"
+
+  - name: Configure ESXi NTP server
+    community.vmware.vmware_host_ntp:
+      hostname: '{{ inventory_hostname }}'
+      username: '{{ ansible_user }}'
+      password: '{{ ansible_ssh_pass }}'
+      validate_certs: no
+      esxi_hostname: '{{ inventory_hostname }}'
+      ntp_servers: '{{ ntp_server_string }}'
+    delegate_to: localhost
+
+  - name: Start ESXi ntpd for the hosts
+    community.vmware.vmware_host_service_manager:
+      hostname: '{{ inventory_hostname }}'
+      username: '{{ ansible_user }}'
+      password: '{{ ansible_ssh_pass }}'
+      validate_certs: no
+      esxi_hostname: '{{ inventory_hostname }}'
+      service_name: ntpd
+      service_policy: on
+    delegate_to: localhost

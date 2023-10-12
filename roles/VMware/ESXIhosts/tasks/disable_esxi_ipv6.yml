@@ -1,0 +1,10 @@
+---
+  - name: Disable IPv6 on ESXi host
+    community.vmware.vmware_host_ipv6:
+      hostname: '{{ inventory_hostname }}'
+      username: '{{ ansible_user }}'
+      password: '{{ ansible_ssh_pass }}'
+      validate_certs: no
+      esxi_hostname: '{{ inventory_hostname }}'
+      state: disabled
+    delegate_to: localhost

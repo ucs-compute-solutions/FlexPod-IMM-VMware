@@ -1,0 +1,11 @@
+---
+# Configuration for VMware Infrastructure
+# Variables can be modified under ../defaults/main.yml
+# These tasks perform necessary configurations in vCenter after adding ESXi Hosts
+# to vCenter
+#
+# vCenter Configuration Tasks
+#
+# Set Allowed vCLS Datastore on Cluster
+  - include_tasks: set_allowed_vcls_datastores.yml
+#

@@ -1,0 +1,16 @@
+---
+#
+  - name: Modify Management Network Portgroup
+    community.vmware.vmware_portgroup:
+      hostname: '{{ inventory_hostname }}'
+      username: '{{ ansible_user }}'
+      password: '{{ ansible_ssh_pass }}'
+      validate_certs: no
+      esxi_hostname: '{{ inventory_hostname }}'
+      switch: "vSwitch0"
+      portgroup: "Management Network"
+      teaming:
+        active_adapters:
+          - vmnic0
+          - vmnic1
+    delegate_to: localhost

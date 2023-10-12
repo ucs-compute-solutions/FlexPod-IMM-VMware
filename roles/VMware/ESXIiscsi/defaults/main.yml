@@ -1,0 +1,22 @@
+# Variables for ESXi iSCSI (ONLY) Configuration
+# Adjust the variable values as per your requirements
+#
+# Uplinks to be used by various Switch Configurations
+#
+iscsi_a_uplink: "vmnic4"
+iscsi_b_uplink: "vmnic5"
+#
+iscsi_mtu: '9000'
+nvme_tcp_mtu: '9000'
+#
+iscsi_a_vswitch: "iScsiBootvSwitch"
+iscsi_b_vswitch: "iScsiBootvSwitch-B"
+#
+iscsi_a_portgroup: "iScsiBootPG"
+iscsi_b_portgroup: "iScsiBootPG-B"
+#
+iscsi_targets:
+    - "{{ iscsi_lif_01a }}"
+    - "{{ iscsi_lif_01b }}"
+    - "{{ iscsi_lif_02a }}"
+    - "{{ iscsi_lif_02b }}"
