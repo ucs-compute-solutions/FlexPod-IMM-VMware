@@ -19,7 +19,7 @@
   - flexpod_config
 
 #Execute the below ONTAP Role after UCS playbook
-- name: Configure ONTAP iGroups and LUNs
+- name: Configure ONTAP Boot Storage Setup
   hosts: ontap
   gather_facts: False
   vars_files:
@@ -33,7 +33,7 @@
   - flexpod_config
 
 #Execute the below ONTAP Role after installing and configuring ESXi Hosts
-- name: Configure ONTAP FC NVMe namespace and subsystem
+- name: Configure ONTAP NVMe Setup and finalize ONTAP storage
   hosts: ontap
   gather_facts: False
   vars_files:
@@ -46,3 +46,4 @@
   tags:
   - ontap_config_part_3
   - flexpod_config
+  
