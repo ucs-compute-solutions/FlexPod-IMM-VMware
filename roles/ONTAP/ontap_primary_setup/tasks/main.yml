@@ -329,12 +329,11 @@
   tags:
     - ontap_fc_adapters
 
-# Configure autosupport
-- name: Configure autosupport
+# Configure AutoSupport
+- name: Configure AutoSupport
   netapp.ontap.na_ontap_autosupport:
     mail_hosts: "{{autosupport_vars.mail_hosts}}"
     node_name: "{{item.node_name}}"
-    noteto: "{{autosupport_vars.noteto}}"
     to_addresses: "{{autosupport_vars.to_addresses}}"
     from_address: "{{autosupport_vars.from_address}}"
     proxy_url: "{{autosupport_vars.proxy_url | default(omit)}}"
