@@ -208,4 +208,3 @@
     - "{{svm_specs}}"
   tags:
     - ontap_update_ls_mirrors
-    
