@@ -1,5 +1,5 @@
 ---
-# Create the aggr list variable for the infra SVM
+# Create the aggr list variable for the Infra SVM
 - name: Create the aggregate list variable for Infra SVM
   ansible.builtin.set_fact:
     total_aggr_list: "{{ total_aggr_list | default([]) + [item.aggr_name] }}"
