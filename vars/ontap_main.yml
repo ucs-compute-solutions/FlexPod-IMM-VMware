@@ -37,7 +37,6 @@ nlf_filepath:
 #Details for configuring NetApp AutoSupport
 autosupport_vars:
   mail_hosts: 10.102.1.150
-  noteto: "<email-address>"
   proxy_url: #Optional: If authentication is used, use format: "username:password@host:port"
   from_address: "aa02-a800@flexpodb4.cisco.com"
   to_addresses: "<email-address>"
@@ -167,3 +166,4 @@ ifgrp_mode: multimode_lacp
 #Job Schedule
 job_schedule:
   - {job_name: 15min, job_minutes: 15}
+  
