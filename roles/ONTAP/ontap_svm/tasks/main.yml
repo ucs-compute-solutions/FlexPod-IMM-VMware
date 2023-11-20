@@ -143,6 +143,7 @@
   with_sequence: start=1 end="{{ final_count }}" format={{ rootvol_aggr.ontap_info.storage_volumes.records[0].name }}_lsm0%1x
   tags:
     - ontap_ls_mirror_volumes
+    - ontap_snapmirror_relationship
 
 # Create the LSM aggr list variable
 - name: Create the load-sharing mirrors aggregate list variable
@@ -329,3 +330,4 @@
     validate_certs: false
   tags:
     - ontap_svm_remove_insecure_ciphers
+    
