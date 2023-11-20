@@ -154,7 +154,7 @@
     - ontap_vcls_datastores
 
 # Create FlexVol for storing SVM audit log config
-- name: Create FlexVol for SVM audit log config
+- name: Create FlexVol for SVM audit log configuration
   netapp.ontap.na_ontap_volume:
     state: present
     vserver: "{{svm_specs.svm_name}}"
@@ -174,12 +174,31 @@
   tags:
     - ontap_svm_audit_log_vol
 
+# Get the SVM root volume information
+- name: Get the SVM root volume information
+  netapp.ontap.na_ontap_rest_info:
+    hostname: "{{inventory_hostname}}"
+    username: "{{username}}"
+    password: "{{password}}"
+    https: true
+    validate_certs: false
+    use_rest: always
+    use_python_keys: true
+    gather_subset:
+      - volume_info
+    parameters:
+      name: "*root"
+      svm.name: "{{svm_specs.svm_name}}"
+  register: svm_rootvol
+  tags:
+    - ontap_update_ls_mirrors
+
 # Update set of load-sharing mirrors
 - name: Update load-sharing mirrors
   netapp.ontap.na_ontap_rest_cli:
     command: 'snapmirror/update-ls-set'
     verb: 'POST'
-    body: {'source-path': '{{item.svm_name}}:{{item.svm_root_vol}}'}
+    body: {'source-path': '{{item.svm_name}}:{{svm_rootvol.ontap_info.storage_volumes.records[0].name}}'}
     hostname: "{{inventory_hostname}}"
     username: "{{username}}"
     password: "{{password}}"
@@ -189,3 +208,4 @@
     - "{{svm_specs}}"
   tags:
     - ontap_update_ls_mirrors
+    
