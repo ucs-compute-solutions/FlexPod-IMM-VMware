@@ -24,9 +24,6 @@
   netapp.ontap.na_ontap_svm:
     state: present
     name: "{{item.svm_name}}"
-    root_volume: "{{item.svm_root_vol}}"
-    root_volume_aggregate: "{{aggr_list[0]}}"
-    root_volume_security_style: unix
     allowed_protocols: "{{item.allowed_protocols}}"
     aggr_list: "{{aggr_list}}"
     hostname: "{{inventory_hostname}}"
