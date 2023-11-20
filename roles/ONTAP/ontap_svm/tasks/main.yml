@@ -1,8 +1,8 @@
 ---
 # Create the aggr list variable for the infra SVM
-- name: Create the aggregate list variable for infra SVM
+- name: Create the aggregate list variable for Infra SVM
   ansible.builtin.set_fact:
-    aggr_list: "{{ aggr_list | default([]) + [item.aggr_name] }}"
+    total_aggr_list: "{{ total_aggr_list | default([]) + [item.aggr_name] }}"
   with_items:
     - "{{ ha_pairs | map(attribute='node_specs') | flatten | map(attribute='data_aggregates') | flatten }}"
   when: item.aggr_name is defined and item.aggr_name != None
@@ -12,8 +12,8 @@
     - ontap_snapmirror_relationship
 
 # See the aggr list
-- name: See the aggregate list
-  ansible.builtin.debug: var=aggr_list
+- name: See the aggregate list for Infra SVM
+  ansible.builtin.debug: var=total_aggr_list
   tags:
     - ontap_config_svm
     - ontap_ls_mirror_volumes
@@ -25,7 +25,7 @@
     state: present
     name: "{{item.svm_name}}"
     allowed_protocols: "{{item.allowed_protocols}}"
-    aggr_list: "{{aggr_list}}"
+    aggr_list: "{{total_aggr_list}}"
     hostname: "{{inventory_hostname}}"
     username: "{{username}}"
     password: "{{password}}"
@@ -58,25 +58,111 @@
 # Getting total count of data aggregates created
 - name: Get the total number of data aggregates created across all nodes in the ONTAP Cluster
   ansible.builtin.set_fact:
-    total_aggr_count: "{{ aggr_list|length }}"
+    total_aggr_count: "{{ total_aggr_list|length }}"
   tags:
     - ontap_ls_mirror_volumes
     - ontap_snapmirror_relationship
 
-# See the aggr count
-- name: See the aggr count
-  ansible.builtin.debug: var=total_aggr_count
+# Get the SVM root volume aggregate information
+- name: Get the SVM root volume aggregate information
+  netapp.ontap.na_ontap_rest_info:
+    hostname: "{{inventory_hostname}}"
+    username: "{{username}}"
+    password: "{{password}}"
+    https: true
+    validate_certs: false
+    use_rest: always
+    use_python_keys: true
+    gather_subset:
+      - volume_info
+    parameters:
+      name: "*root"
+      svm.name: "{{svm_specs.svm_name}}"
+    fields:
+      - aggregates
+  register: rootvol_aggr
   tags:
     - ontap_ls_mirror_volumes
     - ontap_snapmirror_relationship
 
-# Create mirror volumes for the root volume
-- name: Create the load-sharing mirror volumes for the root volume
+# Get the SVM root volume node information
+- name: Get the SVM root volume node information
+  netapp.ontap.na_ontap_rest_info:
+    hostname: "{{inventory_hostname}}"
+    username: "{{username}}"
+    password: "{{password}}"
+    https: true
+    validate_certs: false
+    use_rest: always
+    use_python_keys: true
+    gather_subset:
+      - aggregate_info
+    parameters:
+      name: "{{ rootvol_aggr.ontap_info.storage_volumes.records[0].aggregates[0].name }}"
+    fields:
+      - node.name
+  register: node_name
+  tags:
+    - ontap_ls_mirror_volumes
+    - ontap_snapmirror_relationship
+
+# Create the aggregate list with aggregates hosted on SVM root volume node
+- name: Create the aggregate list with aggregates hosted on SVM root volume node
+  ansible.builtin.set_fact:
+    aggr_list: "{{ aggr_list | default([]) + [item.1.aggr_name] }}"
+  with_subelements:
+    - "{{ ha_pairs | map(attribute='node_specs') | flatten }}"
+    - data_aggregates
+  when:
+    - item.0.node_name == node_name.ontap_info.storage_aggregates.records[0].node.name
+    - item.1.aggr_name is defined and item.1.aggr_name != None
+  tags:
+    - ontap_ls_mirror_volumes
+    - ontap_snapmirror_relationship
+
+# Getting total count of data aggregates hosted on SVM root volume node
+- name: Get the total number of data aggregates created on SVM root volume node
+  ansible.builtin.set_fact:
+    aggr_count: "{{ aggr_list|length }}"
+  tags:
+    - ontap_ls_mirror_volumes
+    - ontap_snapmirror_relationship
+
+# Getting total count of data aggregates for creating LSM of SVM root volume
+- name: Get the total number of data aggregates for creating load-sharing mirrors for SVM root volume
+  ansible.builtin.set_fact:
+    final_count: "{{ (final_count|default(0)|int + total_aggr_count|int - aggr_count|int)|int }}"
+  tags:
+    - ontap_ls_mirror_volumes
+    - ontap_snapmirror_relationship
+
+# Create the LSM volumes name list
+- name: Create the load-sharing mirror volumes name list
+  ansible.builtin.set_fact:
+    lsm_vol_list: "{{ lsm_vol_list|default([]) + [ {'lsm_vol_name': item} ] }}"
+  with_sequence: start=1 end="{{ final_count }}" format={{ rootvol_aggr.ontap_info.storage_volumes.records[0].name }}_lsm0%1x
+  tags:
+    - ontap_ls_mirror_volumes
+
+# Create the LSM aggr list variable
+- name: Create the load-sharing mirrors aggregate list variable
+  ansible.builtin.set_fact:
+    lsm_aggr_list: "{{ lsm_aggr_list|default([]) + [ {'lsm_aggr_name': item.aggr_name} ] }}"
+  with_items:
+    - "{{ ha_pairs | map(attribute='node_specs') | flatten | map(attribute='data_aggregates') | flatten }}"
+  when:
+    - item.aggr_name is defined and item.aggr_name != None
+    - item.aggr_name not in aggr_list
+  tags:
+    - ontap_ls_mirror_volumes
+
+# Create mirror volumes for the SVM root volume
+- name: Create the load-sharing mirror volumes for the SVM root volume
   netapp.ontap.na_ontap_volume:
     state: present
     vserver: "{{svm_specs.svm_name}}"
-    name: "{{item.1}}"
-    aggregate_name: "{{item.0.aggr_name}}"
+    name: "{{item.1.lsm_vol_name}}"
+    aggregate_name: "{{item.0.lsm_aggr_name}}"
     size: 1
     type: DP
     hostname: "{{inventory_hostname}}"
@@ -85,14 +171,13 @@
     https: true
     validate_certs: false
   with_together:
-    - "{{ ha_pairs | map(attribute='node_specs') | flatten | map(attribute='data_aggregates') | flatten }}"
-    - "{{ lookup('sequence', 'start=1 end={{ total_aggr_count }} format={{ svm_specs.svm_root_vol }}_m0%1x', wantlist=True) }}"
-  when: item.0.aggr_name is defined and item.0.aggr_name != None
+    - "{{lsm_aggr_list}}"
+    - "{{lsm_vol_list}}"
   tags:
     - ontap_ls_mirror_volumes
 
-# Create Job schedule for the root volume
-- name: Create a job schedule for the snapmirror of root volume
+# Create Job schedule for the SVM root volume
+- name: Create a job schedule for the snapmirror of SVM root volume
   netapp.ontap.na_ontap_job_schedule:
     state: present
     name: "{{item.job_name}}"
@@ -110,20 +195,21 @@
 # Create the SnapMirror relationship
 - name: Create the SnapMirror relationships
   netapp.ontap.na_ontap_command:
-    command: "['snapmirror', 'create', '-source-path', '{{ svm_specs.svm_name }}:{{ svm_specs.svm_root_vol }}', '-destination-path', '{{ svm_specs.svm_name }}:{{ item }}', '-type', 'LS', '-schedule', '{{ job_schedule.0.job_name }}']"
+    command: "['snapmirror', 'create', '-source-path', '{{ svm_specs.svm_name }}:{{ rootvol_aggr.ontap_info.storage_volumes.records[0].name }}', '-destination-path', '{{ svm_specs.svm_name }}:{{ item.lsm_vol_name }}', '-type', 'LS', '-schedule', '{{ job_schedule.0.job_name }}']"
     hostname: "{{inventory_hostname}}"
     username: "{{username}}"
     password: "{{password}}"
     https: true
     validate_certs: false
-  with_sequence: start=1 end="{{ total_aggr_count }}" format={{ svm_specs.svm_root_vol }}_m0%1x
+  with_items:
+    - "{{lsm_vol_list}}"
   tags:
     - ontap_snapmirror_relationship
 
 # Initialize the mirroring relationship
 - name: Initialize the mirroring relationship
   netapp.ontap.na_ontap_command:
-    command: "['snapmirror', 'initialize-ls-set', '-source-path', '{{ svm_specs.svm_name }}:{{ svm_specs.svm_root_vol }}']"
+    command: "['snapmirror', 'initialize-ls-set', '-source-path', '{{ svm_specs.svm_name }}:{{ rootvol_aggr.ontap_info.storage_volumes.records[0].name }}']"
     hostname: "{{inventory_hostname}}"
     username: "{{username}}"
     password: "{{password}}"
