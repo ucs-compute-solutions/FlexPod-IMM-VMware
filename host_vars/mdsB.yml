@@ -71,7 +71,7 @@
       speed: "32000"
 #
   ucs_interface_list:
-    - interface: "fc1/5"
+     - interface: "fc1/5"
       description: "AA02-6536-B:fc1/35/1"
       speed: "32000"
     - interface: "fc1/6"
@@ -83,4 +83,5 @@
     - interface: "fc1/8"
       description: "AA02-6536-B:fc1/35/4"
       speed: "32000"
+
 

@@ -2,10 +2,10 @@
 # Variables defined here are specific to Nexus9K-A for SAN Switching.
 #
 # Variables used to create FCoE port channel to UCS.
-  port_channel_id: 1103
+  port_channel_id: 114
   port_channel_speed: "auto"
   port_channel_duplex: "auto"
-  port_channel_description: "AA02-6536-A"
+  port_channel_description: "AA16-6454-A"
 #
 #  VSAN number to use used for a the fabric being created
   vsan_id: "{{ vsan_A_id }}"

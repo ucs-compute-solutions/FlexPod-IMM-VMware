@@ -2,7 +2,23 @@
 #
 # SSH connection may fail for esxcli if previous ssh known_host key has been acquired
 #
-  - name: Add iSCSI Targets to each host
-    ansible.builtin.command: esxcli iscsi adapter discovery sendtarget add --address='{{ item }}':3260 --adapter=vmhba64
+#  - name: Add iSCSI Targets to each host
+#    ansible.builtin.command: esxcli iscsi adapter discovery sendtarget add --address='{{ item }}':3260 --adapter=vmhba64
+#    with_list: "{{ iscsi_targets }}"
+#    when: configure_iscsi == 'true'
+#
+  - name: Add iSCSI Dynamic Targets to each ESXi host
+    community.vmware.vmware_host_iscsi:
+      hostname: '{{ inventory_hostname }}'
+      username: '{{ ansible_user }}'
+      password: '{{ ansible_ssh_pass }}'
+      validate_certs: no
+      esxi_hostname: '{{ inventory_hostname }}'
+      iscsi_config:
+        vmhba_name: vmhba64
+        send_target:
+          address: "{{ item }}"
+      state: present
     with_list: "{{ iscsi_targets }}"
+    delegate_to: localhost
     when: configure_iscsi == 'true'

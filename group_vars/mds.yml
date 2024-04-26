@@ -8,3 +8,4 @@ provider_ssh:
   password: "{{ ansible_password }}"
   transport: network_cli
 #
+

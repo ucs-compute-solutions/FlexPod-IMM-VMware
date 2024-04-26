@@ -8,3 +8,80 @@ provider_ssh:
   password: "{{ ansible_password }}"
   transport: network_cli
 #
+backup_dir: "~/"
+#
+enabled_features:
+  - lacp
+  - vpc
+  - interface-vlan
+  - nxapi
+  - udld
+  - lldp
+#
+global_settings:
+  - spanning-tree port type network default
+  - spanning-tree port type edge bpduguard default
+  - spanning-tree port type edge bpdufilter default
+  - port-channel load-balance src-dst l4port
+  - system default switchport
+  - system default switchport shutdown
+#
+ntp_distribution_vlan: "{{ ib_vlan_id }}" # VLAN (IB-MGMT) where NTP distribution interfaces will be placed.
+ntp_distribution_nm_cidr: "/24"
+ntp_distribution_gw: '10.102.1.254' # Default gateway for IB-MGMT NTP distribution interfaces - not used if Nexus NTP distribution not used.
+#
+# In this lab setup, port-channel numbers are keyed off of port numbers. For example, if port Eth1/11 is the first port
+# in a port-channel, the port-channel will be port-channel111. This does not apply to the vPC Peer Link.
+uplink_PC:
+  - interface: "port-channel127"
+    # id must be same as port-channel number
+    id: "127"
+    speed: "auto"
+    duplex: "auto"
+    description: "AA02-93180-Uplink"
+#
+peerlink_PC:
+  - interface: "port-channel10"
+    # id must be same as port-channel number
+    id: "10"
+    speed: "auto"
+    duplex: "auto"
+    description: "vPC Peer Link"
+#
+FI_A_PC:
+  - interface: "port-channel15"
+    # id must be same as port-channel number
+    id: "15"
+    speed: "auto"
+    duplex: "auto"
+    description: "AA02-6536-A"
+#
+FI_B_PC:
+  - interface: "port-channel16"
+    # id must be same as port-channel number
+    id: "16"
+    speed: "auto"
+    duplex: "auto"
+    description: "AA02-6536-B"
+#
+storage_A_PC:
+  - interface: "port-channel11"
+    # id must be same as port-channel number
+    id: "11"
+    speed: "auto"
+    duplex: "auto"
+    description: "AA02-A800-01"
+#
+storage_B_PC:
+  - interface: "port-channel12"
+    # id must be same as port-channel number
+    id: "12"
+    speed: "auto"
+    duplex: "auto"
+    description: "AA02-A800-02"
+#
+all_port_channels: "{{ peerlink_PC + uplink_PC + FI_A_PC + FI_B_PC + storage_A_PC + storage_B_PC }}"
+#
+# VPC Parameters
+#
+vpc_domain_id: "10"

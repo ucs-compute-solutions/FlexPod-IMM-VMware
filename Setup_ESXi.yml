@@ -13,6 +13,7 @@
   gather_facts: no
   serial: 1
   vars_files:
+    - group_vars/secrets.yml
     - vars/ontap_main.yml
   roles:
     - role: VMware/ESXIiscsi
@@ -26,6 +27,7 @@
   gather_facts: no
   serial: 1
   vars_files:
+    - group_vars/secrets.yml
     - vars/ontap_main.yml
   roles:
     - role: VMware/ESXIhosts

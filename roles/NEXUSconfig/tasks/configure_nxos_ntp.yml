@@ -14,19 +14,23 @@
         peers:
           - peer: "{{ vpc_destination }}"
             vrf: management
+    when: use_nexus_ntp_distribution == 'true'
   - name: Set NTP Distribution Options
     cisco.nxos.nxos_ntp_global:
       config:
         master: 
           stratum: '3'
+    when: use_nexus_ntp_distribution == 'true'
   - name: Create NTP Distribution Interface
     cisco.nxos.nxos_l3_interfaces:
       config:
       - name: Vlan"{{ ntp_distribution_vlan }}"
         ipv4:
         - address: "{{ IB_MGMT_ntp_dist_IP }}"
+    when: use_nexus_ntp_distribution == 'true'
   - name: Enable NTP Distribution Interface
     cisco.nxos.nxos_interfaces:
       config:
       - name: Vlan"{{ ntp_distribution_vlan }}"
         enabled: true
+    when: use_nexus_ntp_distribution == 'true'

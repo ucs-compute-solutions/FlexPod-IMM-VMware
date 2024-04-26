@@ -539,9 +539,8 @@
 - name: Remove insecure ciphers from the ONTAP Cluster
   netapp.ontap.na_ontap_rest_cli:
     command: 'security/ssh/remove'
-    verb: 'DELETE'
-    params: {'vserver': '{{cluster_name}}'}
-    body: {'ciphers': ['aes256-cbc','aes192-cbc','aes128-cbc','3des-cbc']}
+    verb: 'POST'
+    body: {'ciphers': ['aes256-cbc','aes192-cbc','aes128-cbc','3des-cbc'], 'vserver': '{{cluster_name}}'}
     hostname: "{{inventory_hostname}}"
     username: "{{username}}"
     password: "{{password}}"

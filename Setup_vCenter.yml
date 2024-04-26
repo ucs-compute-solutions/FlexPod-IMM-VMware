@@ -9,7 +9,8 @@
 #
 ################################################################################
 - hosts: localhost
-#
+  vars_files:
+    - group_vars/secrets.yml
   roles:
     - VMware/VMWAREvcenter
 
@@ -26,6 +27,7 @@
   gather_facts: no
   serial: 1
   vars_files:
+    - group_vars/secrets.yml
     - roles/VMware/ESXIiscsi/defaults/main.yml
   roles:
     - role: VMware/ESXIpostvC
@@ -36,6 +38,8 @@
 - hosts: esxi_fc
   gather_facts: no
   serial: 1
+  vars_files:
+    - group_vars/secrets.yml
   roles:
     - role: VMware/ESXIpostvC
       when: configure_fc == 'true'
@@ -53,6 +57,7 @@
 - hosts: localhost
 #
   vars_files:
+    - group_vars/secrets.yml
     - vars/ontap_main.yml
   roles:
     - VMware/VMWAREvcenterpostESXI

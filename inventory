@@ -3,18 +3,18 @@
 10.102.0.30
 
 [nexus]
-n9kA ansible_host=10.102.0.3 ansible_user=admin ansible_password=<password> ansible_network_os=nxos
-n9kB ansible_host=10.102.0.4 ansible_user=admin ansible_password=<password> ansible_network_os=nxos
+n9kA ansible_host=10.102.0.3 ansible_user=admin ansible_password="{{ password_1 }}" ansible_network_os=nxos
+n9kB ansible_host=10.102.0.4 ansible_user=admin ansible_password="{{ password_1 }}" ansible_network_os=nxos
 
-# e.g. n9kA ansible_host=192.168.1.2 ansible_user=admin ansible_password=cisco!23 ansible_network_os=nxos
-# e.g. n9kB ansible_host=192.168.1.3 ansible_user=admin ansible_password=cisco!23 ansible_network_os=nxos
+# e.g. n9kA ansible_host=192.168.1.2 ansible_user=admin ansible_password="{{ password_1 }}" ansible_network_os=nxos
+# e.g. n9kB ansible_host=192.168.1.3 ansible_user=admin ansible_password="{{ password_1 }}" ansible_network_os=nxos
 
 [mds]
-mdsA ansible_host=10.102.0.7 ansible_user=admin ansible_password=<password> ansible_network_os=nxos
-mdsB ansible_host=10.102.0.8 ansible_user=admin ansible_password=<password> ansible_network_os=nxos
+mdsA ansible_host=10.102.0.7 ansible_user=admin ansible_password="{{ password_1 }}" ansible_network_os=nxos
+mdsB ansible_host=10.102.0.8 ansible_user=admin ansible_password="{{ password_1 }}" ansible_network_os=nxos
 
-# e.g. mdsA ansible_host=192.168.1.4 ansible_user=admin ansible_password=cisco!23 ansible_network_os=nxos
-# e.g. mdsB ansible_host=192.168.1.5 ansible_user=admin ansible_password=cisco!23 ansible_network_os=nxos
+# e.g. mdsA ansible_host=192.168.1.4 ansible_user=admin ansible_password="{{ password_1 }}" ansible_network_os=nxos
+# e.g. mdsB ansible_host=192.168.1.5 ansible_user=admin ansible_password="{{ password_1 }}" ansible_network_os=nxos
 
 [vmware:children]
 #
@@ -32,7 +32,7 @@ esxi_iscsi
 [vmware:vars]
 ansible_connection=ssh
 ansible_user=root
-ansible_ssh_pass=<password>
+ansible_ssh_pass="{{ password_1 }}"
 ansible_ssh_common_args='-o StrictHostKeyChecking=no'
 ansible_python_interpreter=/bin/python
 
@@ -57,7 +57,6 @@ aa02-esxi-03.flexpodb4.cisco.com vmotion_ip=192.168.0.103 vmotion_mask=255.255.2
 # iSCSI host names are defined in group_vars/all.yml. The actual host FQDN, or host IP can be used here.
 # Note that if an IP is not used here, the FQDN should be used for the VMware scripts to work without errors.
 #
-
 # aa02-esxi-04.flexpodb4.cisco.com vmotion_ip=192.168.0.104 vmotion_mask=255.255.255.0 nfs_ip=192.168.50.104 nfs_mask=255.255.255.0 iscsi_a_ip=192.168.10.104 iscsi_b_ip=192.168.20.104 iscsi_mask=255.255.255.0 nvme_a_ip=192.168.30.104 nvme_b_ip=192.168.40.104 nvme_mask=255.255.255.0
 # aa02-esxi-05.flexpodb4.cisco.com vmotion_ip=192.168.0.105 vmotion_mask=255.255.255.0 nfs_ip=192.168.50.105 nfs_mask=255.255.255.0 iscsi_a_ip=192.168.10.105 iscsi_b_ip=192.168.20.105 iscsi_mask=255.255.255.0 nvme_a_ip=192.168.30.105 nvme_b_ip=192.168.40.105 nvme_mask=255.255.255.0
 # aa02-esxi-06.flexpodb4.cisco.com vmotion_ip=192.168.0.106 vmotion_mask=255.255.255.0 nfs_ip=192.168.50.106 nfs_mask=255.255.255.0 iscsi_a_ip=192.168.10.106 iscsi_b_ip=192.168.20.106 iscsi_mask=255.255.255.0 nvme_a_ip=192.168.30.106 nvme_b_ip=192.168.40.106 nvme_mask=255.255.255.0

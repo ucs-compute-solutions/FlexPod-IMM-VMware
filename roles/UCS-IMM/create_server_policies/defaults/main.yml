@@ -4,7 +4,7 @@
 # BIOS policies
 description_of_bios_policy : "BIOS Policy for Performance Optimized Intel-based M7 ESXi Servers"
 description_of_m6_bios_policy : "BIOS Policy for Performance Optimized {{ server_cpu_type }}-based M6 ESXi Servers"
-description_of_m5_bios_policy : "BIOS Policy for Performance Optimized Intel-based M5 ESXi Servers"
+description_of_m5_bios_policy : "BIOS Policy for Performance Optimized {{ server_cpu_type }}-based M5 ESXi Servers"
 # IMC Access Policy
 description_of_imc_access_policy    : "IMC Access Policy for KVM Access"
 

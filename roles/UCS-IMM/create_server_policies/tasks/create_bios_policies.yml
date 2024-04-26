@@ -1,127 +1,110 @@
 ---
-- name: "Configure BIOS Policies"
-  vars:
-    api_info: &api_info
+  - name: "Configure Intel M7 Virtualization BIOS Policy"
+    cisco.intersight.intersight_bios_policy:
       api_private_key: "{{ api_private_key }}"
       api_key_id: "{{ api_key_id }}"
-      api_uri: "{{ api_uri | default(omit) }}"
-      validate_certs: "{{ validate_certs | default(omit) }}"
-      state: "{{ state | default(omit) }}"
-  block:
-  - name: "Configure Intel M7 Virtualization BIOS Policy"
-    cisco.intersight.intersight_rest_api:
-      <<: *api_info
-      resource_path: /bios/Policies
-      query_params:
-        $filter: "Name eq '{{ name_of_bios_policy }}'"
-      api_body: {
-          "Name": "{{ name_of_bios_policy }}",
-          "Description": "{{ description_of_bios_policy }}",
-          "Organization": {
-             "Moid": "{{ intersight_org.api_response.Moid }}"
-           },
-          Tags: [{Key: "configmode", Value: "ansible"},{Key: "prefix", Value: "{{ prefix }}"}],
-          "CdnEnable": "enabled",
-          "ProcessorC6report": "enabled",
-          "WorkLoadConfig": "Balanced",
-        }
+      organization: "{{ org_name }}"
+      name: "{{ name_of_bios_policy }}"
+      description: "{{ description_of_bios_policy }}"
+      tags:
+        - Key: "configmode"
+          Value: "ansible"
+        - Key: "prefix"
+          Value: "{{ prefix }}"
+      cdn_enable: "enabled"
+      processor_c6report: "enabled"
+      work_load_config: "Balanced"
     register: bios_policy
     when: server_cpu_type == "Intel"
 
   - name: "Configure Intel M6 Virtualization BIOS Policy"
-    cisco.intersight.intersight_rest_api:
-      <<: *api_info
-      resource_path: /bios/Policies
-      query_params:
-        $filter: "Name eq '{{ name_of_m6_bios_policy }}'"
-      api_body: {
-          "Name": "{{ name_of_m6_bios_policy }}",
-          "Description": "{{ description_of_m6_bios_policy }}",
-          "Organization": {
-             "Moid": "{{ intersight_org.api_response.Moid }}"
-           },
-          Tags: [{Key: "configmode", Value: "ansible"},{Key: "prefix", Value: "{{ prefix }}"}],
-          "CdnEnable": "enabled",
-          "CpuPerfEnhancement": "Auto",
-          "EnergyEfficientTurbo": "enabled",
-          "NvmdimmPerformConfig": "Balanced Profile",
-          "ProcessorC1e": "enabled",
-          "ProcessorC6report": "enabled",
-        }
+    cisco.intersight.intersight_bios_policy:
+      api_private_key: "{{ api_private_key }}"
+      api_key_id: "{{ api_key_id }}"
+      organization: "{{ org_name }}"
+      name: "{{ name_of_m6_bios_policy }}"
+      description: "{{ description_of_m6_bios_policy }}"
+      tags:
+        - Key: "configmode"
+          Value: "ansible"
+        - Key: "prefix"
+          Value: "{{ prefix }}"
+      cdn_enable: "enabled"
+      cpu_perf_enhancement: "Auto"
+      energy_efficient_turbo: "enabled"
+      nvmdimm_perform_config: "Balanced Profile"
+      processor_c1e: "enabled"
+      processor_c6report: "enabled"
+      lom_ports_all_state: "disabled"
     register: m6_bios_policy
     when: server_cpu_type == "Intel"
 
   - name: "Configure Intel M5 Virtualization BIOS Policy"
-    cisco.intersight.intersight_rest_api:
-      <<: *api_info
-      resource_path: /bios/Policies
-      query_params:
-        $filter: "Name eq '{{ name_of_m5_bios_policy }}'"
-      api_body: {
-          "Name": "{{ name_of_m5_bios_policy }}",
-          "Description": "{{ description_of_m5_bios_policy }}",
-          "Organization": {
-             "Moid": "{{ intersight_org.api_response.Moid }}"
-           },
-          Tags: [{Key: "configmode", Value: "ansible"},{Key: "prefix", Value: "{{ prefix }}"}],
-          "CdnSupport": "platform-default",
-          "CpuPowerManagement": "custom",
-          "NvmdimmPerformConfig": "Balanced Profile",
-          "ProcessorC1e": "disabled",
-          "ProcessorC3report": "disabled",
-          "ProcessorC6report": "disabled",
-          "ProcessorCstate": "disabled",
-        }
+    cisco.intersight.intersight_bios_policy:
+      api_private_key: "{{ api_private_key }}"
+      api_key_id: "{{ api_key_id }}"
+      organization: "{{ org_name }}"
+      name: "{{ name_of_m5_bios_policy }}"
+      description: "{{ description_of_m5_bios_policy }}"
+      tags:
+        - Key: "configmode"
+          Value: "ansible"
+        - Key: "prefix"
+          Value: "{{ prefix }}"
+      cdn_enable: "enabled"
+      cpu_power_management: "custom"
+      nvmdimm_perform_config: "Balanced Profile"
+      processor_c1e: "disabled"
+      processor_c3report: "disabled"
+      processor_c6report: "disabled"
+      processor_cstate: "disabled"
+      lom_ports_all_state: "disabled"
     register: m5_bios_policy
     when: server_cpu_type == "Intel"  
 
   - name: "Configure AMD M6 Virtualization BIOS Policy"
-    cisco.intersight.intersight_rest_api:
-      <<: *api_info
-      resource_path: /bios/Policies
-      query_params:
-        $filter: "Name eq '{{ name_of_m6_bios_policy }}'"
-      api_body: {
-          "Name": "{{ name_of_m6_bios_policy }}",
-          "Description": "{{ description_of_m6_bios_policy }}",
-          "Organization": {
-             "Moid": "{{ intersight_org.api_response.Moid }}"
-           },
-          Tags: [{Key: "configmode", Value: "ansible"},{Key: "prefix", Value: "{{ prefix }}"}],
-          "CbsCmnApbdis": "1",
-          "CbsCmnCpuCpb": "Auto",
-          "CbsCmnCpuGlobalCstateCtrl": "Auto",
-          "CbsCmnCpuL1streamHwPrefetcher": "Auto",
-          "CbsCmnCpuL2streamHwPrefetcher": "Auto",
-          "CbsCmnDeterminismSlider": "Power",
-          "CbsCmnEfficiencyModeEn": "Auto",
-          "CbsCmnFixedSocPstate": "P0",
-          "CbsCmnGnbNbIommu": "Auto",
-          "CbsDfCmnAcpiSratL3numa": "enabled",
-          "CbsDfCmnDramNps": "NPS4",
-          "CdnEnable": "enabled",
-          "CiscoXgmiMaxSpeed": "disabled",
-          "SmtMode": "Auto",
-          "SvmMode": "enabled",
-        }
+    cisco.intersight.intersight_bios_policy:
+      api_private_key: "{{ api_private_key }}"
+      api_key_id: "{{ api_key_id }}"
+      organization: "{{ org_name }}"
+      name: "{{ name_of_m6_bios_policy }}"
+      description: "{{ description_of_m6_bios_policy }}"
+      tags:
+        - Key: "configmode"
+          Value: "ansible"
+        - Key: "prefix"
+          Value: "{{ prefix }}"
+      cdn_enable: "enabled"
+      cbs_cmn_apbdis: "1"
+      cbs_cmn_cpu_cpb: "Auto"
+      cbs_cmn_cpu_global_cstate_ctrl: "Auto"
+      cbs_cmn_cpu_l1stream_hw_prefetcher: "Auto"
+      cbs_cmn_cpu_l2stream_hw_prefetcher: "Auto"
+      cbs_cmn_determinism_slider: "Power"
+      cbs_cmn_efficiency_mode_en: "Auto"
+      cbs_cmn_fixed_soc_pstate: "P0"
+      cbs_cmn_gnb_nb_iommu: "Auto"
+      cbs_df_cmn_acpi_srat_l3numa: "enabled"
+      cbs_df_cmn_dram_nps: "NPS4"
+      cisco_xgmi_max_speed: "disabled"
+      smt_mode: "Auto"
+      svm_mode: "enabled"
     register: m6_bios_policy
     when: server_cpu_type == "AMD"
 
   - name: "Configure AMD M5 Virtualization BIOS Policy for C125"
-    cisco.intersight.intersight_rest_api:
-      <<: *api_info
-      resource_path: /bios/Policies
-      query_params:
-        $filter: "Name eq '{{ name_of_m5_bios_policy }}'"
-      api_body: {
-          "Name": "{{ name_of_m5_bios_policy }}",
-          "Description": "{{ description_of_m5_bios_policy }}",
-          "Organization": {
-             "Moid": "{{ intersight_org.api_response.Moid }}"
-           },
-          Tags: [{Key: "configmode", Value: "ansible"},{Key: "prefix", Value: "{{ prefix }}"}],
-          "CbsCmnDeterminismSlider": "Power",
-          "CdnEnable": "enabled",
-        }
+    cisco.intersight.intersight_bios_policy:
+      api_private_key: "{{ api_private_key }}"
+      api_key_id: "{{ api_key_id }}"
+      organization: "{{ org_name }}"
+      name: "{{ name_of_m5_bios_policy }}"
+      description: "{{ description_of_m5_bios_policy }}"
+      tags:
+        - Key: "configmode"
+          Value: "ansible"
+        - Key: "prefix"
+          Value: "{{ prefix }}"
+      cdn_enable: "enabled"
+      cbs_cmn_determinism_slider: "Power"
     register: m5_bios_policy
     when: server_cpu_type == "AMD"

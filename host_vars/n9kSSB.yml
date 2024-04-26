@@ -2,10 +2,10 @@
 # Variables defined here are specific to Nexus9K-B for SAN Switching.
 #
 # Variables used to create port channel to UCS.
-  port_channel_id: 1103
+  port_channel_id: 114
   port_channel_speed: "auto"
   port_channel_duplex: "auto"
-  port_channel_description: "AA02-6536-B"
+  port_channel_description: "AA16-6454-B"
 #
 #  VSAN number to use used for a the fabric being created
   vsan_id: "{{ vsan_B_id }}"
@@ -35,12 +35,6 @@
     - device_name: "FCP-{{ fc_esxi_hosts[2].hostname }}-B"
       pwwn: "{{ fc_esxi_hosts[2].fcp_b_wwpn }}"
       dev_type: initiator
-    - device_name: "FCP-{{ fc_esxi_hosts[3].hostname }}-B"
-      pwwn: "{{ fc_esxi_hosts[3].fcp_b_wwpn }}"
-      dev_type: initiator
-    - device_name: "FCP-{{ fc_esxi_hosts[4].hostname }}-B"
-      pwwn: "{{ fc_esxi_hosts[4].fcp_b_wwpn }}"
-      dev_type: initiator
 #
   fc_nvme_device_alias_list:
     - device_name: "{{ svm_specs.svm_name }}-fc-nvme-lif-01b"
@@ -59,12 +53,6 @@
       dev_type: initiator
     - device_name: "FC-NVMe-{{ fc_esxi_hosts[2].hostname }}-B"
       pwwn: "{{ fc_esxi_hosts[2].fc_nvme_b_wwpn }}"
-      dev_type: initiator
-    - device_name: "FC-NVMe-{{ fc_esxi_hosts[3].hostname }}-B"
-      pwwn: "{{ fc_esxi_hosts[3].fc_nvme_b_wwpn }}"
-      dev_type: initiator
-    - device_name: "FC-NVMe-{{ fc_esxi_hosts[4].hostname }}-B"
-      pwwn: "{{ fc_esxi_hosts[4].fc_nvme_b_wwpn }}"
       dev_type: initiator
 #
 # Nexus Switch Interface List

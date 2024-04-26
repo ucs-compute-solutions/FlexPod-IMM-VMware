@@ -3,7 +3,6 @@
 # 
 # Enter Intersight API Key ID and the location of the SecretKey file
 # 
-api_key_id        : key1/key2/key3
 api_private_key   : SecretKey.txt
 # 
 # Prefix added to the pool/policy/profile configuration to eaisly identify items created by Ansible
@@ -42,7 +41,7 @@ uuid_from: 'AA02-000000000001'
 # IP Address Pool for Management Access (in-band access) - Our example uses the OOB-MGMT Pool and VLAN with in-band access. The OOB-MGMT VLAN ID has to be hard coded here.
 #
 name_of_ip_pool_for_management_access       : "{{ prefix }}-OOB-MGMT-IP-Pool"
-imc_access_vlan                             : 1020 # VLAN ID for Pool Subnet
+imc_access_vlan                             : 1020 # VLAN ID for Pool Subnet 
 ip_pool_start_for_management_access         : 10.102.0.211
 size_of_ip_pool_for_management_access       : 20
 gateway_mgmt                                : 10.102.0.254
@@ -115,7 +114,7 @@ size_of_iqn_pool                      : 32
 # BIOS policies
 name_of_bios_policy        : "{{ prefix }}-Intel-M7-Virt-BIOS"
 name_of_m6_bios_policy     : "{{ prefix }}-{{ server_cpu_type }}-M6-Virt-BIOS"
-name_of_m5_bios_policy     : "{{ prefix }}-Intel-M5-Virt-BIOS"
+name_of_m5_bios_policy     : "{{ prefix }}-{{ server_cpu_type }}-M5-Virt-BIOS"
 #
 # IMC Access Policy - Configures the KVM to be accessed In-Band
 # The in-band vlan must be enabled on the trunk between Nexus 9K and UCS FI
@@ -136,7 +135,7 @@ name_of_ipmi_policy                 : "{{ prefix }}-Enable-IPMIoLAN-Policy"
 # Local User Policy to enable KVM and IPMI Access
 name_of_LocalUser_policy            : "{{ prefix }}-LocalUser-Policy"
 name_of_local_user                  : "flexadmin"
-password_for_local_user             : "<password>"
+password_for_local_user             : "{{ password_1 }}"
 
 # Ethernet QoS Policy to set MTU 9000 and QoS Best Effort;
 # QoS values can be updated in roles/create_server_policies/defaults/main.yml
@@ -220,17 +219,13 @@ fc_boot_order_policy_name         : "{{ prefix }}-FC-{{ vic_type }}-VIC-Boot-Ord
 
 # Fibre Channel Network Policy: SAN-A
 name_of_fc_network_policy_san_a         : "{{ prefix}}-FC-Network-SAN-A"
-#fcoe_vlan_id_SAN_A                      : "{{ vsan_list[0].fcoe_vlan }}"
-#vsan_id_SAN_A                           : "{{ vsan_list[0].vsan_id }}"
-#fcoe_vlan_id_SAN_A                      : 101
-#vsan_id_SAN_A                           : 101
+fcoe_vlan_id_SAN_A                      : "{{ vsan_list[0].fcoe_vlan }}"
+vsan_id_SAN_A                           : "{{ vsan_list[0].vsan_id }}"
 
 # Fibre Channel Network Policy: SAN-B
 name_of_fc_network_policy_san_b         : "{{ prefix}}-FC-Network-SAN-B"
-#fcoe_vlan_id_SAN_B                      : "{{ vsan_list[1].fcoe_vlan }}"
-#vsan_id_SAN_B                           : "{{ vsan_list[1].vsan_id }}"
-#fcoe_vlan_id_SAN_B                      : 102
-#vsan_id_SAN_B                           : 102
+fcoe_vlan_id_SAN_B                      : "{{ vsan_list[1].fcoe_vlan }}"
+vsan_id_SAN_B                           : "{{ vsan_list[1].vsan_id }}"
 
 # Provide logical names to identify during boot
 san_boot_device_1a_name      : "fcp-lif-01a"

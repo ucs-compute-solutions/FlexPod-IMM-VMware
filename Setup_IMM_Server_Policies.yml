@@ -6,6 +6,7 @@
   hosts: localhost
   gather_facts: no
   vars_files:
+    - group_vars/secrets.yml
     - group_vars/ucs.yml
 
   # Create Various Server Policies

@@ -320,9 +320,8 @@
 - name: Remove insecure ciphers from the SVM
   netapp.ontap.na_ontap_rest_cli:
     command: 'security/ssh/remove'
-    verb: 'DELETE'
-    params: {'vserver': '{{svm_specs.svm_name}}'}
-    body: {'ciphers': ['aes256-cbc','aes192-cbc','aes128-cbc','3des-cbc']}
+    verb: 'POST'
+    body: {'ciphers': ['aes256-cbc','aes192-cbc','aes128-cbc','3des-cbc'], 'vserver': '{{svm_specs.svm_name}}'}
     hostname: "{{inventory_hostname}}"
     username: "{{username}}"
     password: "{{password}}"

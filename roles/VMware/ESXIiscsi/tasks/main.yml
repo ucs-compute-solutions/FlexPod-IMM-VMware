@@ -1,5 +1,7 @@
 # Procedures to setup iSCSI paramters on the ESXi Hosts
 #
+# Set DNS servers and domain on ESXi Hosts
+  - include_tasks: modify_esxi_dns.yml
 # Modify the iSCSI-A vSwitch and add iSCSI-B vSwitch
   - include_tasks: modify_esxi_iscsi_vswitch.yml
 # Create the iSCSI-B Port-Group on iSCSI-B vSwitch

@@ -10,3 +10,4 @@
           - dest: 0.0.0.0/0
             next_hops:
             - forward_router_address: "{{ ntp_distribution_gw }}"
+    when: use_nexus_ntp_distribution == 'true'

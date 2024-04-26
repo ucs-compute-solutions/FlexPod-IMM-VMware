@@ -36,8 +36,8 @@ The steps for setting up a FlexPod with FC boot with FC-NVMe and NFS storage pro
 8.  Query the Infra-SVM iSCSI IQN and add to the "all.yml" file.
 9.  Follow the manual steps in the CVD to create an Intersight Account, and get the Cisco UCS Fabric Interconnects (FIs) on the network in Intersight Managed Mode.
 10.  Claim the FIs into Intersight and setup and deploy the Domain Profile.
-11.  Execute the IMM playbooks with "ansible-playbook ./Create_IMM_Pools.yml", "ansible-playbook ./Create_IMM_Server_Policies.yml", and 
-     "ansible-playbook ./Create_IMM_Server_Profile_Templates.yml" to setup the Cisco UCS Server Profile Templates, Policies, and Pools.
+11.  Execute the IMM playbooks with "ansible-playbook ./Setup_IMM_Pools.yml", "ansible-playbook ./Setup_IMM_Server_Policies.yml", and 
+     "ansible-playbook ./Setup_IMM_Server_Profile_Templates.yml" to setup the Cisco UCS Server Profile Templates, Policies, and Pools.
 12.  Follow the manual steps in the CVD to create UCS IMM server profiles for three or more VMware ESXi management hosts.
 13.  Query the ESXi host IQNs or WWPNs from the server profiles and add to the "all.yml" file.
 14.  If configuring Fibre Channel, follow the manual steps in the CVD to set up the MDS switches on the network and ssh into each switch.

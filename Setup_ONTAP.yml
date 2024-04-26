@@ -4,6 +4,7 @@
   hosts: ontap
   gather_facts: False
   vars_files:
+    - group_vars/secrets.yml
     - vars/ontap_main.yml
     - group_vars/all.yml
   connection: local
@@ -23,6 +24,7 @@
   hosts: ontap
   gather_facts: False
   vars_files:
+    - group_vars/secrets.yml
     - vars/ontap_main.yml
     - group_vars/all.yml
   connection: local
@@ -37,6 +39,7 @@
   hosts: ontap
   gather_facts: False
   vars_files:
+    - group_vars/secrets.yml
     - vars/ontap_main.yml
     - group_vars/all.yml
   connection: local
