@@ -45,7 +45,7 @@
   connection: local
   roles:
   - { role: ONTAP/ontap_nvme, tags: [ 'ontap_nvme' ] }
-  - { role: ONTAP/ontap_finalize_setup, tags: [ 'ontap_finalize_setup' ]}
+  - { role: ONTAP/ontap_finalize_setup, tags: [ 'ontap_finalize_setup' ] }
   tags:
   - ontap_config_part_3
   - flexpod_config
